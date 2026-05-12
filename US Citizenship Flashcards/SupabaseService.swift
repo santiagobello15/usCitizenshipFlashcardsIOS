@@ -102,6 +102,17 @@ final class SupabaseService {
         try await client.auth.signOut()
     }
 
+    func deleteAccount() async throws {
+        guard let userId = await currentUserId else { return }
+        try await client
+            .from("user_settings")
+            .delete()
+            .eq("user_id", value: userId)
+            .execute()
+        try? await client.functions.invoke("delete-account")
+        try await client.auth.signOut()
+    }
+
     // MARK: - Settings Persistence
 
     func fetchSettings(for userId: String) async -> UserSettings? {

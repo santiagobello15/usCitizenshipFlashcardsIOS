@@ -22,6 +22,7 @@ struct ContentView: View {
     @State private var userAvatarUrl: String?
     @State private var authLoading = false
     @State private var authError: String?
+    @State private var showDeleteConfirm = false
     @Environment(\.scenePhase) var scenePhase
 
     private var currentCard: Flashcard { cards[currentIndex] }
@@ -192,6 +193,34 @@ struct ContentView: View {
                         Spacer()
                         Text("USCIS.gov")
                             .foregroundStyle(.secondary)
+                    }
+                }
+
+                if isAuthenticated {
+                    Section {
+                        Button(role: .destructive) {
+                            showDeleteConfirm = true
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Text("Delete Account")
+                                Spacer()
+                            }
+                        }
+                        .confirmationDialog("Delete Account", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
+                            Button("Delete", role: .destructive) {
+                                Task {
+                                    try? await SupabaseService.shared.deleteAccount()
+                                    isAuthenticated = false
+                                    userEmail = nil
+                                    userName = nil
+                                    userAvatarUrl = nil
+                                }
+                            }
+                            Button("Cancel", role: .cancel) { }
+                        } message: {
+                            Text("All your saved progress and settings will be permanently deleted. This cannot be undone.")
+                        }
                     }
                 }
             }
