@@ -1,5 +1,7 @@
 import SwiftUI
 
+private enum CardGesturePhase { case idle, waitingForPeek, peeking, swiping }
+
 struct ContentView: View {
     @State private var cards = allFlashcards
     @State private var currentIndex = 0
@@ -9,13 +11,12 @@ struct ContentView: View {
     @State private var results: [String: Assessment] = [:]
 
     @State private var rotation: Double = 0
-    @State private var touchStart: Date?
-    @State private var wasFlippedBefore: Bool = false
-    @State private var isSwiping = false
+    @State private var navigatingForward = true
+    @State private var gesturePhase: CardGesturePhase = .idle
+    @State private var peekTask: Task<Void, Never>? = nil
 
     @State private var showSettings = false
     @State private var showLogin = false
-    @State private var showSplash = true
     @State private var isAuthenticated = false
     @State private var userEmail: String?
     @State private var userName: String?
@@ -48,50 +49,36 @@ struct ContentView: View {
     private var totalAssessed: Int { results.count }
 
     var body: some View {
-        ZStack {
-            NavigationStack {
-                VStack(spacing: 0) {
-                    header
-                    Spacer()
-                    cardArea
-                    Spacer()
-                    controls
-                }
-                .toolbar {
-                    ToolbarItem(placement: leadingPlacement) {
-                        Button { showLogin = true } label: {
-                            Image(systemName: isAuthenticated ? "person.circle.fill" : "person.circle")
-                                .font(.title3)
-                                .foregroundStyle(isAuthenticated ? .blue : .secondary)
-                        }
-                    }
-                    ToolbarItem(placement: trailingPlacement) {
-                        Button { showSettings = true } label: {
-                            Image(systemName: "gearshape")
-                                .font(.title3)
-                                .foregroundStyle(.secondary)
-                        }
+        NavigationStack {
+            VStack(spacing: 0) {
+                header
+                Spacer()
+                cardArea
+                Spacer()
+                controls
+            }
+            .background(Color(.systemBackground))
+            .toolbar {
+                ToolbarItem(placement: leadingPlacement) {
+                    Button { showLogin = true } label: {
+                        Image(systemName: isAuthenticated ? "person.circle.fill" : "person.circle")
+                            .font(.title3)
+                            .foregroundStyle(isAuthenticated ? .blue : .secondary)
                     }
                 }
-                .sheet(isPresented: $showSettings) {
-                    settingsSheet
-                }
-                .sheet(isPresented: $showLogin) {
-                    loginSheet
+                ToolbarItem(placement: trailingPlacement) {
+                    Button { showSettings = true } label: {
+                        Image(systemName: "gearshape")
+                            .font(.title3)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
-
-            if showSplash {
-                splashView
-                    .transition(.opacity)
-                    .zIndex(1)
+            .sheet(isPresented: $showSettings) {
+                settingsSheet
             }
-        }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                withAnimation(.easeOut(duration: 0.4)) {
-                    showSplash = false
-                }
+            .sheet(isPresented: $showLogin) {
+                loginSheet
             }
         }
         .task {
@@ -111,18 +98,6 @@ struct ContentView: View {
                 Task { await saveCurrentSettings() }
             }
         }
-    }
-
-    private var splashView: some View {
-        Color(.systemBackground)
-            .ignoresSafeArea()
-            .overlay {
-                Image("BrandIcon")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 120, height: 120)
-            }
-            .transition(.opacity)
     }
 
     // MARK: - Settings Sheet
@@ -418,71 +393,84 @@ struct ContentView: View {
     // MARK: - Card
 
     private var cardArea: some View {
-        CardView(card: cards[currentIndex], rotation: $rotation)
-            .id(cards[currentIndex].id)
-            .padding(.horizontal, 16)
-            .gesture(cardDrag)
-            .onChange(of: currentIndex) { _, _ in
-                rotation = 0
-            }
+        ZStack {
+            CardView(card: cards[currentIndex], rotation: $rotation)
+                .id(cards[currentIndex].id)
+                .transition(.asymmetric(
+                    insertion: .move(edge: navigatingForward ? .trailing : .leading),
+                    removal: .move(edge: navigatingForward ? .leading : .trailing)
+                ))
+        }
+        .padding(.horizontal, 16)
+        .clipped()
+        .contentShape(Rectangle())
+        .gesture(cardGesture)
     }
 
-    private var cardDrag: some Gesture {
+    private func flipCard() {
+        withAnimation(.interpolatingSpring(mass: 0.7, stiffness: 80, damping: 12, initialVelocity: 3)) {
+            rotation = rotation < 90 ? 180 : 0
+        }
+    }
+
+    private var cardGesture: some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                let dx = value.translation.width
-
-                if abs(dx) > 8 {
-                    if !isSwiping {
-                        isSwiping = true
-                        rotation = 0
-                        touchStart = nil
-                    }
-                    return
-                }
-
-                if touchStart == nil {
-                    touchStart = .now
-                    wasFlippedBefore = rotation >= 90
-                    if rotation < 90 {
-                        withAnimation(.interpolatingSpring(mass: 0.7, stiffness: 80, damping: 12, initialVelocity: 3)) {
-                            rotation = 180
+                let movement = max(abs(value.translation.width), abs(value.translation.height))
+                switch gesturePhase {
+                case .idle:
+                    if movement > 12 {
+                        gesturePhase = .swiping
+                    } else {
+                        gesturePhase = .waitingForPeek
+                        peekTask = Task { @MainActor in
+                            try? await Task.sleep(for: .milliseconds(180))
+                            guard !Task.isCancelled, gesturePhase == .waitingForPeek else { return }
+                            gesturePhase = .peeking
+                            withAnimation(.interpolatingSpring(mass: 0.7, stiffness: 80, damping: 12, initialVelocity: 3)) {
+                                rotation = 180
+                            }
                         }
                     }
+                case .waitingForPeek:
+                    if movement > 12 {
+                        gesturePhase = .swiping
+                        peekTask?.cancel()
+                        peekTask = nil
+                    }
+                case .peeking:
+                    if movement > 12 {
+                        gesturePhase = .swiping
+                        withAnimation(.interpolatingSpring(mass: 0.7, stiffness: 80, damping: 12, initialVelocity: 3)) {
+                            rotation = 0
+                        }
+                    }
+                case .swiping:
+                    break
                 }
             }
             .onEnded { value in
                 let dx = value.translation.width
-
-                if isSwiping || abs(dx) > 50 {
-                    isSwiping = false
-                    rotation = 0
-                    touchStart = nil
-                    if dx < 0, currentIndex < cards.count - 1 {
+                defer {
+                    gesturePhase = .idle
+                    peekTask?.cancel()
+                    peekTask = nil
+                }
+                switch gesturePhase {
+                case .peeking:
+                    withAnimation(.interpolatingSpring(mass: 0.7, stiffness: 80, damping: 12, initialVelocity: 3)) {
+                        rotation = 0
+                    }
+                case .swiping:
+                    if dx < -50, currentIndex < cards.count - 1 {
+                        navigatingForward = true
                         nextCard()
-                    } else if dx > 0, currentIndex > 0 {
+                    } else if dx > 50, currentIndex > 0 {
+                        navigatingForward = false
                         previousCard()
                     }
-                    return
-                }
-
-                isSwiping = false
-                guard let start = touchStart else { return }
-                let elapsed = Date.now.timeIntervalSince(start)
-                touchStart = nil
-
-                if elapsed < 0.15 {
-                    if wasFlippedBefore {
-                        withAnimation(.interpolatingSpring(mass: 0.7, stiffness: 80, damping: 12, initialVelocity: 3)) {
-                            rotation = 0
-                        }
-                    }
-                } else {
-                    if rotation >= 90 {
-                        withAnimation(.interpolatingSpring(mass: 0.7, stiffness: 80, damping: 12, initialVelocity: 3)) {
-                            rotation = 0
-                        }
-                    }
+                case .idle, .waitingForPeek:
+                    flipCard()
                 }
             }
     }
@@ -640,6 +628,8 @@ struct ContentView: View {
 
     private func nextCard() {
         guard currentIndex < cards.count - 1 else { return }
+        rotation = 0
+        navigatingForward = true
         withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
             currentIndex += 1
         }
@@ -647,12 +637,16 @@ struct ContentView: View {
 
     private func previousCard() {
         guard currentIndex > 0 else { return }
+        rotation = 0
+        navigatingForward = false
         withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
             currentIndex -= 1
         }
     }
 
     private func resetToStart() {
+        rotation = 0
+        navigatingForward = true
         withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
             currentIndex = 0
         }

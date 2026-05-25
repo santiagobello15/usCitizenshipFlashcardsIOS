@@ -53,7 +53,7 @@ private struct CardFace: View {
 
                     Spacer()
 
-                    Text(accentColor == .blue ? "Hold to answer" : "Release for question")
+                    Text(accentColor == .blue ? "Tap to reveal answer" : "Tap to flip back")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                         .tracking(0.5)

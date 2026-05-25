@@ -403,9 +403,10 @@
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				INFOPLIST_FILE = "US Citizenship Flashcards/CustomInfo.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "US Citizenship Flashcards";
+				INFOPLIST_FILE = CustomInfo.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "US Citizenshi";
 				INFOPLIST_KEY_CFBundleName = "US Citizenship Flashcards";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -422,7 +423,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Santi.US-Citizenship-Flashcards";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "US Citizenship Flashcards";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -448,9 +449,10 @@
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				INFOPLIST_FILE = "US Citizenship Flashcards/CustomInfo.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "US Citizenship Flashcards";
+				INFOPLIST_FILE = CustomInfo.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "US Citizenshi";
 				INFOPLIST_KEY_CFBundleName = "US Citizenship Flashcards";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
@@ -466,7 +468,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.3;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "Santi.US-Citizenship-Flashcards";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "US Citizenship Flashcards";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
