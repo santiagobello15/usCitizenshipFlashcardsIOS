@@ -21,6 +21,7 @@ struct ContentView: View {
     @State private var peekTask: Task<Void, Never>? = nil
 
     @State private var showSettings = false
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var currentCard: Flashcard { cards[currentIndex] }
     private var currentAssessment: Assessment? { results[currentCard.id] }
@@ -208,6 +209,8 @@ struct ContentView: View {
 
     private var navigationRow: some View {
         HStack(spacing: 12) {
+            if sizeClass == .regular { Spacer() }
+
             Button { previousCard() } label: {
                 Image(systemName: "chevron.left")
                     .font(.body.weight(.semibold))
@@ -218,7 +221,9 @@ struct ContentView: View {
             .disabled(currentIndex == 0)
             .buttonStyle(.plain)
 
-            swipeDots.frame(maxWidth: .infinity)
+            swipeDots
+                .frame(maxWidth: sizeClass == .regular ? nil : .infinity)
+                .padding(.horizontal, sizeClass == .regular ? 16 : 0)
 
             Button {
                 if currentIndex == cards.count - 1 { resetToStart() }
@@ -231,6 +236,8 @@ struct ContentView: View {
                     .background(Color(.secondarySystemFill), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .buttonStyle(.plain)
+
+            if sizeClass == .regular { Spacer() }
         }
     }
 
@@ -299,49 +306,76 @@ struct ContentView: View {
 
     // MARK: - Bottom row
 
+    private var shuffleButton: some View {
+        Button {
+            if isShuffled { cards = sourceCards }
+            else          { cards = sourceCards.shuffled() }
+            isShuffled.toggle()
+            currentIndex = 0
+        } label: {
+            Image(systemName: "shuffle")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(isShuffled ? .white : Color(.label).opacity(0.6))
+                .padding(10)
+                .background {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(isShuffled ? Color.brand : Color(.secondarySystemFill))
+                }
+        }
+        .buttonStyle(.plain)
+        .animation(.spring(response: 0.3), value: isShuffled)
+    }
+
     private var bottomRow: some View {
-        HStack(spacing: 10) {
-            Group {
-                if totalAssessed > 0 {
-                    HStack(spacing: 10) {
-                        StatChip(symbol: "checkmark.circle.fill", count: correctCount, color: .green)
-                        StatChip(symbol: "xmark.circle.fill",     count: wrongCount,   color: .red)
-                        StatChip(symbol: "forward.circle.fill",   count: skippedCount, color: .orange)
-                        Button {
-                            withAnimation { results.removeAll() }
-                        } label: {
-                            Text("Clear")
-                                .font(.caption.weight(.medium))
+        Group {
+            if sizeClass == .regular {
+                // iPad: stats centered + bigger, shuffle overlaid right
+                ZStack {
+                    HStack(spacing: 16) {
+                        if totalAssessed > 0 {
+                            StatChip(symbol: "checkmark.circle.fill", count: correctCount, color: .green, chipFont: .body.weight(.medium))
+                            StatChip(symbol: "xmark.circle.fill",     count: wrongCount,   color: .red,   chipFont: .body.weight(.medium))
+                            StatChip(symbol: "forward.circle.fill",   count: skippedCount, color: .orange, chipFont: .body.weight(.medium))
+                            Button {
+                                withAnimation { results.removeAll() }
+                            } label: {
+                                Text("Clear").font(.subheadline.weight(.medium)).foregroundStyle(.tertiary)
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            Text("Mark each card to track your progress")
+                                .font(.subheadline)
                                 .foregroundStyle(.tertiary)
                         }
-                        .buttonStyle(.plain)
                     }
-                } else {
-                    Text("Mark each card to track your progress")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
+                    HStack { Spacer(); shuffleButton }
+                }
+            } else {
+                // iPhone: original layout
+                HStack(spacing: 10) {
+                    Group {
+                        if totalAssessed > 0 {
+                            HStack(spacing: 10) {
+                                StatChip(symbol: "checkmark.circle.fill", count: correctCount, color: .green)
+                                StatChip(symbol: "xmark.circle.fill",     count: wrongCount,   color: .red)
+                                StatChip(symbol: "forward.circle.fill",   count: skippedCount, color: .orange)
+                                Button {
+                                    withAnimation { results.removeAll() }
+                                } label: {
+                                    Text("Clear").font(.caption.weight(.medium)).foregroundStyle(.tertiary)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        } else {
+                            Text("Mark each card to track your progress")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                    Spacer()
+                    shuffleButton
                 }
             }
-
-            Spacer()
-
-            Button {
-                if isShuffled { cards = sourceCards }
-                else          { cards = sourceCards.shuffled() }
-                isShuffled.toggle()
-                currentIndex = 0
-            } label: {
-                Image(systemName: "shuffle")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(isShuffled ? .white : Color(.label).opacity(0.6))
-                    .padding(10)
-                    .background {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(isShuffled ? Color.brand : Color(.secondarySystemFill))
-                    }
-            }
-            .buttonStyle(.plain)
-            .animation(.spring(response: 0.3), value: isShuffled)
         }
     }
 
@@ -492,13 +526,14 @@ private struct StatChip: View {
     let symbol: String
     let count: Int
     let color: Color
+    var chipFont: Font = .caption.weight(.medium)
 
     var body: some View {
         HStack(spacing: 3) {
             Image(systemName: symbol).foregroundStyle(color)
             Text("\(count)").monospacedDigit().contentTransition(.numericText()).foregroundStyle(.secondary)
         }
-        .font(.caption.weight(.medium))
+        .font(chipFont)
     }
 }
 
