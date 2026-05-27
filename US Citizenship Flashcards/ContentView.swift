@@ -469,7 +469,7 @@ struct ContentView: View {
             }
         }
         #if os(iOS)
-        .presentationDetents([.fraction(0.65), .large])
+        .presentationDetents([.fraction(0.85), .large])
         .presentationDragIndicator(.hidden)
         #endif
     }
