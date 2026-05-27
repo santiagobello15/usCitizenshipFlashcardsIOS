@@ -24,9 +24,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		7BD09BAB2FAD695C00D853C2 /* NaturalizeMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NaturalizeMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		7BD09BBA2FAD695D00D853C2 /* NaturalizeMeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NaturalizeMeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		7BD09BC42FAD695D00D853C2 /* NaturalizeMeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NaturalizeMeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BD09BAB2FAD695C00D853C2 /* US Civics Flash.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "US Civics Flash.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BD09BBA2FAD695D00D853C2 /* US Civics FlashTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "US Civics FlashTests.xctest"; path = "US Civics FlashTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BD09BC42FAD695D00D853C2 /* US Civics FlashUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "US Civics FlashUITests.xctest"; path = "US Civics FlashUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -85,9 +85,9 @@
 		7BD09BAC2FAD695C00D853C2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7BD09BAB2FAD695C00D853C2 /* NaturalizeMe.app */,
-				7BD09BBA2FAD695D00D853C2 /* NaturalizeMeTests.xctest */,
-				7BD09BC42FAD695D00D853C2 /* NaturalizeMeUITests.xctest */,
+				7BD09BAB2FAD695C00D853C2 /* US Civics Flash.app */,
+				7BD09BBA2FAD695D00D853C2 /* US Civics FlashTests.xctest */,
+				7BD09BC42FAD695D00D853C2 /* US Civics FlashUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -114,7 +114,7 @@
 			packageProductDependencies = (
 			);
 			productName = "US Civics Flash";
-			productReference = 7BD09BAB2FAD695C00D853C2 /* NaturalizeMe.app */;
+			productReference = 7BD09BAB2FAD695C00D853C2 /* US Civics Flash.app */;
 			productType = "com.apple.product-type.application";
 		};
 		7BD09BB92FAD695D00D853C2 /* US Civics FlashTests */ = {
@@ -137,7 +137,7 @@
 			packageProductDependencies = (
 			);
 			productName = "US Civics FlashTests";
-			productReference = 7BD09BBA2FAD695D00D853C2 /* NaturalizeMeTests.xctest */;
+			productReference = 7BD09BBA2FAD695D00D853C2 /* US Civics FlashTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		7BD09BC32FAD695D00D853C2 /* US Civics FlashUITests */ = {
@@ -160,7 +160,7 @@
 			packageProductDependencies = (
 			);
 			productName = "US Civics FlashUITests";
-			productReference = 7BD09BC42FAD695D00D853C2 /* NaturalizeMeUITests.xctest */;
+			productReference = 7BD09BC42FAD695D00D853C2 /* US Civics FlashUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -394,8 +394,8 @@
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				INFOPLIST_FILE = NaturalizeMe/CustomInfo.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NaturalizeMe;
+				INFOPLIST_FILE = "US Civics Flash/CustomInfo.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "US Civics Flash";
 				INFOPLIST_KEY_CFBundleName = "US Civics Flash";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -413,7 +413,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Santi.NaturalizeMe;
+				PRODUCT_BUNDLE_IDENTIFIER = Santi.USCivicsFlash;
 				PRODUCT_NAME = "US Civics Flash";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -440,8 +440,8 @@
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				INFOPLIST_FILE = NaturalizeMe/CustomInfo.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = NaturalizeMe;
+				INFOPLIST_FILE = "US Civics Flash/CustomInfo.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "US Civics Flash";
 				INFOPLIST_KEY_CFBundleName = "US Civics Flash";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -458,7 +458,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Santi.NaturalizeMe;
+				PRODUCT_BUNDLE_IDENTIFIER = Santi.USCivicsFlash;
 				PRODUCT_NAME = "US Civics Flash";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
