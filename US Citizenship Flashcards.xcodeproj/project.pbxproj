@@ -398,7 +398,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				INFOPLIST_FILE = "US Citizenship Flashcards/CustomInfo.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "US Citizenshi";
+				INFOPLIST_KEY_CFBundleDisplayName = "US Flashcards";
 				INFOPLIST_KEY_CFBundleName = "US Citizenship Flashcards";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -444,7 +444,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				INFOPLIST_FILE = "US Citizenship Flashcards/CustomInfo.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "US Citizenshi";
+				INFOPLIST_KEY_CFBundleDisplayName = "US Flashcards";
 				INFOPLIST_KEY_CFBundleName = "US Citizenship Flashcards";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
