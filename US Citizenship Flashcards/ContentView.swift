@@ -453,9 +453,13 @@ struct ContentView: View {
                     }
                 }
             }
+            .scrollIndicators(.visible)
             .navigationTitle("Settings")
             .toolbar { ToolbarItem(placement: .automatic) { Button("Done") { showSettings = false } } }
         }
+        #if os(iOS)
+        .presentationDetents(sizeClass == .regular ? [.large] : [.medium, .large])
+        #endif
     }
 
     // MARK: - Actions
