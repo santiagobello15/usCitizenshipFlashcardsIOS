@@ -21,68 +21,56 @@ private struct CardFace: View {
     let text: String
     let isFront: Bool
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
     private var accentColor: Color { isFront ? .blue : .green }
+    private var isIPad: Bool { sizeClass == .regular }
 
     var body: some View {
         RoundedRectangle(cornerRadius: 24, style: .continuous)
-            .fill(Color(.systemBackground))
-            .shadow(color: .black.opacity(0.07), radius: 20, x: 0, y: 6)
+            .fill(Color(.secondarySystemGroupedBackground))
             .overlay(
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .strokeBorder(Color(.separator).opacity(0.6), lineWidth: 0.5)
             )
-            // Top accent stripe
-            .overlay(alignment: .top) {
-                accentColor
-                    .frame(height: 4)
-                    .clipShape(
-                        UnevenRoundedRectangle(
-                            cornerRadii: RectangleCornerRadii(
-                                topLeading: 24, bottomLeading: 0,
-                                bottomTrailing: 0, topTrailing: 24
-                            ),
-                            style: .continuous
-                        )
-                    )
-            }
             .overlay {
                 VStack(spacing: 0) {
-                    // Side label
+                    // Label
                     HStack {
                         Text(isFront ? "Question" : "Answer")
-                            .font(.caption2.weight(.semibold))
+                            .font(isIPad ? .subheadline.weight(.semibold) : .caption2.weight(.semibold))
                             .foregroundStyle(accentColor)
                             .textCase(.uppercase)
                             .tracking(1.5)
                         Spacer()
                         Image(systemName: isFront ? "questionmark.circle" : "checkmark.circle")
-                            .font(.caption)
+                            .font(isIPad ? .title3 : .caption)
                             .foregroundStyle(accentColor.opacity(0.7))
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 20)
+                    .padding(.horizontal, isIPad ? 32 : 24)
+                    .padding(.top, isIPad ? 28 : 20)
 
                     Spacer()
 
                     // Main text
                     Text(text)
-                        .font(.title3.weight(.semibold))
+                        .font(isIPad ? .title.weight(.semibold) : .title3.weight(.semibold))
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, 28)
+                        .padding(.horizontal, isIPad ? 48 : 28)
 
                     Spacer()
 
                     // Bottom hint
-                    HStack(spacing: 5) {
+                    HStack(spacing: 6) {
                         Image(systemName: "hand.tap")
-                            .font(.caption2)
+                            .font(isIPad ? .subheadline : .caption2)
                         Text(isFront ? "Tap to see answer" : "Tap to go back")
-                            .font(.caption2)
+                            .font(isIPad ? .subheadline : .caption2)
                     }
                     .foregroundStyle(.tertiary)
-                    .padding(.bottom, 18)
+                    .padding(.bottom, isIPad ? 28 : 18)
                 }
             }
     }

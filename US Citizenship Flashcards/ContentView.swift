@@ -47,28 +47,30 @@ struct ContentView: View {
     // MARK: - Body
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                header
-                cardArea
-                    .padding(.vertical, 16)
-                controls
-            }
-            .background(Color(.systemBackground))
-            .tint(.brand)
-            .toolbar {
-                ToolbarItem(placement: trailingPlacement) {
-                    Button { showSettings = true } label: {
-                        Image(systemName: "gearshape")
-                            .fontWeight(.medium)
-                            .foregroundStyle(.secondary)
+        ZStack {
+            Color(.systemBackground).ignoresSafeArea()
+            NavigationStack {
+                VStack(spacing: 0) {
+                    header
+                    cardArea
+                        .padding(.vertical, 16)
+                    controls
+                }
+                .tint(.brand)
+                .toolbarBackground(Color(.systemBackground), for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: trailingPlacement) {
+                        Button { showSettings = true } label: {
+                            Image(systemName: "gearshape")
+                                .fontWeight(.medium)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
+                .sheet(isPresented: $showSettings) { settingsSheet }
             }
-            .sheet(isPresented: $showSettings) { settingsSheet }
         }
         .onAppear { loadPersistedState() }
-        .onChange(of: results)            { _, _ in saveResults() }
         .onChange(of: selectedCategories) { _, _ in saveSelectedCategories() }
     }
 
@@ -78,10 +80,10 @@ struct ContentView: View {
         VStack(spacing: 10) {
             HStack(alignment: .center, spacing: 8) {
                 Text(currentCard.category)
-                    .font(.caption.weight(.medium))
+                    .font(sizeClass == .regular ? .subheadline.weight(.medium) : .caption.weight(.medium))
                     .foregroundStyle(Color.brand)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
+                    .padding(.horizontal, sizeClass == .regular ? 12 : 8)
+                    .padding(.vertical, sizeClass == .regular ? 5 : 3)
                     .background(Color.brand.opacity(0.08), in: Capsule())
                     .lineLimit(1)
 
@@ -89,12 +91,12 @@ struct ContentView: View {
 
                 HStack(spacing: 2) {
                     Text("\(currentIndex + 1)")
-                        .font(.subheadline.weight(.semibold))
+                        .font(sizeClass == .regular ? .title3.weight(.semibold) : .subheadline.weight(.semibold))
                         .foregroundStyle(.primary)
                         .monospacedDigit()
                         .contentTransition(.numericText())
                     Text("/ \(cards.count)")
-                        .font(.subheadline)
+                        .font(sizeClass == .regular ? .title3 : .subheadline)
                         .foregroundStyle(.tertiary)
                         .monospacedDigit()
                 }
@@ -281,15 +283,25 @@ struct ContentView: View {
                 if isSelected { results.removeValue(forKey: currentCard.id) }
                 else          { results[currentCard.id] = type }
             }
+            if !isSelected, currentIndex < cards.count - 1 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) {
+                    if rotation >= 90 {
+                        withAnimation(.interpolatingSpring(mass: 0.7, stiffness: 80, damping: 12, initialVelocity: 3)) {
+                            rotation = 0
+                        }
+                    }
+                    nextCard()
+                }
+            }
         } label: {
             HStack(spacing: 5) {
                 Image(systemName: isSelected ? type.selectedSymbol : type.symbol)
-                    .font(.subheadline.weight(.semibold))
+                    .font(sizeClass == .regular ? .body.weight(.semibold) : .subheadline.weight(.semibold))
                     .symbolRenderingMode(.hierarchical)
                 Text(type.label)
-                    .font(.subheadline.weight(.semibold))
+                    .font(sizeClass == .regular ? .body.weight(.semibold) : .subheadline.weight(.semibold))
             }
-            .padding(.vertical, 13)
+            .padding(.vertical, sizeClass == .regular ? 18 : 13)
             .frame(maxWidth: .infinity)
             .foregroundStyle(isSelected ? type.color : Color(.label).opacity(0.5))
             .background {
@@ -306,6 +318,28 @@ struct ContentView: View {
     }
 
     // MARK: - Bottom row
+
+    private var resetButton: some View {
+        Button {
+            withAnimation(.spring(response: 0.3)) {
+                results.removeAll()
+                rotation = 0
+                currentIndex = 0
+            }
+        } label: {
+            Image(systemName: "arrow.counterclockwise")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color(.label).opacity(0.6))
+                .padding(10)
+                .background {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(Color(.secondarySystemFill))
+                }
+        }
+        .buttonStyle(.plain)
+        .disabled(totalAssessed == 0)
+        .opacity(totalAssessed == 0 ? 0.35 : 1)
+    }
 
     private var shuffleButton: some View {
         Button {
@@ -330,42 +364,30 @@ struct ContentView: View {
     private var bottomRow: some View {
         Group {
             if sizeClass == .regular {
-                // iPad: stats centered + bigger, shuffle overlaid right
+                // iPad: stats centered, reset+shuffle overlaid right
                 ZStack {
                     HStack(spacing: 16) {
                         if totalAssessed > 0 {
-                            StatChip(symbol: "checkmark.circle.fill", count: correctCount, color: .green, chipFont: .body.weight(.medium))
-                            StatChip(symbol: "xmark.circle.fill",     count: wrongCount,   color: .red,   chipFont: .body.weight(.medium))
+                            StatChip(symbol: "xmark.circle.fill",     count: wrongCount,   color: .red,    chipFont: .body.weight(.medium))
                             StatChip(symbol: "forward.circle.fill",   count: skippedCount, color: .orange, chipFont: .body.weight(.medium))
-                            Button {
-                                withAnimation { results.removeAll() }
-                            } label: {
-                                Text("Clear").font(.subheadline.weight(.medium)).foregroundStyle(.tertiary)
-                            }
-                            .buttonStyle(.plain)
+                            StatChip(symbol: "checkmark.circle.fill", count: correctCount, color: .green,  chipFont: .body.weight(.medium))
                         } else {
                             Text("Mark each card to track your progress")
-                                .font(.subheadline)
+                                .font(.body)
                                 .foregroundStyle(.tertiary)
                         }
                     }
-                    HStack { Spacer(); shuffleButton }
+                    HStack { Spacer(); HStack(spacing: 8) { resetButton; shuffleButton } }
                 }
             } else {
-                // iPhone: original layout
+                // iPhone
                 HStack(spacing: 10) {
                     Group {
                         if totalAssessed > 0 {
                             HStack(spacing: 10) {
-                                StatChip(symbol: "checkmark.circle.fill", count: correctCount, color: .green)
                                 StatChip(symbol: "xmark.circle.fill",     count: wrongCount,   color: .red)
                                 StatChip(symbol: "forward.circle.fill",   count: skippedCount, color: .orange)
-                                Button {
-                                    withAnimation { results.removeAll() }
-                                } label: {
-                                    Text("Clear").font(.caption.weight(.medium)).foregroundStyle(.tertiary)
-                                }
-                                .buttonStyle(.plain)
+                                StatChip(symbol: "checkmark.circle.fill", count: correctCount, color: .green)
                             }
                         } else {
                             Text("Mark each card to track your progress")
@@ -374,7 +396,7 @@ struct ContentView: View {
                         }
                     }
                     Spacer()
-                    shuffleButton
+                    HStack(spacing: 8) { resetButton; shuffleButton }
                 }
             }
         }
@@ -458,19 +480,19 @@ struct ContentView: View {
             }
             .navigationTitle("Settings")
             .toolbar {
-                ToolbarItem(placement: .automatic) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button { showSettings = false } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .symbolRenderingMode(.hierarchical)
+                        Image(systemName: "xmark")
+                            .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(.secondary)
-                            .font(.title3)
                     }
                 }
             }
         }
         #if os(iOS)
-        .presentationDetents([.fraction(0.85), .large])
+        .presentationDetents([.large])
         .presentationDragIndicator(.hidden)
+        .presentationBackground(Color(.systemBackground))
         #endif
     }
 
@@ -508,10 +530,6 @@ struct ContentView: View {
     // MARK: - Local persistence
 
     private func loadPersistedState() {
-        if let data = UserDefaults.standard.data(forKey: "results"),
-           let decoded = try? JSONDecoder().decode([String: Assessment].self, from: data) {
-            results = decoded
-        }
         if let data = UserDefaults.standard.data(forKey: "selectedCategories"),
            let decoded = try? JSONDecoder().decode([String].self, from: data) {
             // Only keep categories that are valid for the current set
@@ -521,12 +539,6 @@ struct ContentView: View {
             selectedCategories = currentCategories
         }
         rebuildCards()
-    }
-
-    private func saveResults() {
-        if let data = try? JSONEncoder().encode(results) {
-            UserDefaults.standard.set(data, forKey: "results")
-        }
     }
 
     private func saveSelectedCategories() {
