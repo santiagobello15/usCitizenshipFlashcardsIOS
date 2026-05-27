@@ -32,17 +32,17 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7BD09BAD2FAD695C00D853C2 /* US Civics Flash */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = NaturalizeMe;
+			path = "US Civics Flash";
 			sourceTree = "<group>";
 		};
 		7BD09BBD2FAD695D00D853C2 /* US Civics FlashTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = NaturalizeMeTests;
+			path = "US Civics FlashTests";
 			sourceTree = "<group>";
 		};
 		7BD09BC72FAD695D00D853C2 /* US Civics FlashUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = NaturalizeMeUITests;
+			path = "US Civics FlashUITests";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -494,7 +494,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NaturalizeMe.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NaturalizeMe";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/US Civics Flash.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/US Civics Flash";
 				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Debug;
@@ -519,7 +519,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NaturalizeMe.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NaturalizeMe";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/US Civics Flash.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/US Civics Flash";
 				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Release;
