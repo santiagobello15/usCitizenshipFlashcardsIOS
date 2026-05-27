@@ -115,8 +115,6 @@ struct ContentView: View {
         .padding(.horizontal, 20)
         .padding(.top, 8)
         .padding(.bottom, 4)
-        .frame(maxWidth: 560)
-        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Card area
@@ -204,8 +202,6 @@ struct ContentView: View {
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 24)
-        .frame(maxWidth: 560)
-        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Navigation row
