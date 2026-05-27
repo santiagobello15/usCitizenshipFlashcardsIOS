@@ -405,6 +405,23 @@ struct ContentView: View {
                     LabeledContent("Version", value: "1.0")
                     LabeledContent("Source", value: "USCIS.gov")
                 }
+
+                Section("Legal") {
+                    Link(destination: URL(string: "https://www.bellosuite.com/flashcards/privacy")!) {
+                        HStack {
+                            Text("Privacy Policy").foregroundStyle(.primary)
+                            Spacer()
+                            Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                    Link(destination: URL(string: "https://www.bellosuite.com/flashcards/terms")!) {
+                        HStack {
+                            Text("Terms of Use").foregroundStyle(.primary)
+                            Spacer()
+                            Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
             }
             .navigationTitle("Settings")
             .toolbar { ToolbarItem(placement: .automatic) { Button("Done") { showSettings = false } } }
