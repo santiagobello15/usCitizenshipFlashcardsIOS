@@ -21,6 +21,7 @@ struct ContentView: View {
     @State private var peekTask: Task<Void, Never>? = nil
 
     @State private var showSettings = false
+    @State private var categoriesExpanded = true
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var currentCard: Flashcard { cards[currentIndex] }
@@ -404,19 +405,21 @@ struct ContentView: View {
                     .pickerStyle(.menu)
                 }
 
-                Section("Categories") {
-                    ForEach(availableCategories, id: \.self) { (category: String) in
-                        Button {
-                            if selectedCategories.contains(category) { selectedCategories.remove(category) }
-                            else { selectedCategories.insert(category) }
-                            rebuildCards()
-                            if currentIndex >= cards.count { currentIndex = max(0, cards.count - 1) }
-                        } label: {
-                            HStack {
-                                Text(category).foregroundStyle(.primary)
-                                Spacer()
-                                if selectedCategories.isEmpty || selectedCategories.contains(category) {
-                                    Image(systemName: "checkmark").foregroundStyle(Color.brand)
+                Section {
+                    DisclosureGroup("Categories", isExpanded: $categoriesExpanded) {
+                        ForEach(availableCategories, id: \.self) { (category: String) in
+                            Button {
+                                if selectedCategories.contains(category) { selectedCategories.remove(category) }
+                                else { selectedCategories.insert(category) }
+                                rebuildCards()
+                                if currentIndex >= cards.count { currentIndex = max(0, cards.count - 1) }
+                            } label: {
+                                HStack {
+                                    Text(category).foregroundStyle(.primary)
+                                    Spacer()
+                                    if selectedCategories.isEmpty || selectedCategories.contains(category) {
+                                        Image(systemName: "checkmark").foregroundStyle(Color.brand)
+                                    }
                                 }
                             }
                         }
@@ -453,12 +456,20 @@ struct ContentView: View {
                     }
                 }
             }
-            .scrollIndicators(.visible)
             .navigationTitle("Settings")
+            .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    Button { showSettings = false } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(.secondary)
+                            .font(.title3)
+                    }
+                }
+            }
         }
         #if os(iOS)
-        .presentationDetents(sizeClass == .regular ? [.large] : [.medium, .large])
-        .presentationDragIndicator(.visible)
+        .presentationDetents([.medium, .large])
         #endif
     }
 
