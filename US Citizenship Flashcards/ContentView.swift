@@ -52,8 +52,6 @@ struct ContentView: View {
                     .padding(.vertical, 16)
                 controls
             }
-            .frame(maxWidth: 560)
-            .frame(maxWidth: .infinity)
             .background(Color(.systemBackground))
             .tint(.brand)
             .toolbar {
@@ -117,6 +115,8 @@ struct ContentView: View {
         .padding(.horizontal, 20)
         .padding(.top, 8)
         .padding(.bottom, 4)
+        .frame(maxWidth: 560)
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Card area
@@ -131,7 +131,6 @@ struct ContentView: View {
                 ))
         }
         .padding(.horizontal, 20)
-        .frame(maxHeight: 380)
         .clipped()
         .contentShape(Rectangle())
         .gesture(cardGesture)
@@ -205,6 +204,8 @@ struct ContentView: View {
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 24)
+        .frame(maxWidth: 560)
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Navigation row
