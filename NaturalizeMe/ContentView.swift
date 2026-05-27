@@ -462,14 +462,14 @@ struct ContentView: View {
                 }
 
                 Section("Legal") {
-                    Link(destination: URL(string: "https://www.bellosuite.com/naturalizeme/privacy")!) {
+                    Link(destination: URL(string: "https://www.bellosuite.com/uscivicsflash/privacy")!) {
                         HStack {
                             Text("Privacy Policy").foregroundStyle(.primary)
                             Spacer()
                             Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(.secondary)
                         }
                     }
-                    Link(destination: URL(string: "https://www.bellosuite.com/naturalizeme/terms")!) {
+                    Link(destination: URL(string: "https://www.bellosuite.com/uscivicsflash/terms")!) {
                         HStack {
                             Text("Terms of Use").foregroundStyle(.primary)
                             Spacer()

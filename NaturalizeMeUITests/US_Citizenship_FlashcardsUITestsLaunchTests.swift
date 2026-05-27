@@ -5,7 +5,7 @@
 
 import XCTest
 
-final class NaturalizeMeUITestsLaunchTests: XCTestCase {
+final class USCivicsFlashUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

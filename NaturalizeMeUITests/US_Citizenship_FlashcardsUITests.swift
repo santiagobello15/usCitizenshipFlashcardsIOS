@@ -5,7 +5,7 @@
 
 import XCTest
 
-final class NaturalizeMeUITests: XCTestCase {
+final class USCivicsFlashUITests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false

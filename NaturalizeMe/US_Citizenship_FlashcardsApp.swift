@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct NaturalizeMeApp: App {
+struct USCivicsFlashApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
