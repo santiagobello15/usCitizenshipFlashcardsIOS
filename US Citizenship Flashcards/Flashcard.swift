@@ -15,9 +15,17 @@ enum Assessment: String, CaseIterable, Codable {
 
     var symbol: String {
         switch self {
+        case .correct: return "checkmark.circle"
+        case .wrong:   return "xmark.circle"
+        case .skipped: return "forward.circle"
+        }
+    }
+
+    var selectedSymbol: String {
+        switch self {
         case .correct: return "checkmark.circle.fill"
-        case .wrong: return "xmark.circle.fill"
-        case .skipped: return "forward.fill"
+        case .wrong:   return "xmark.circle.fill"
+        case .skipped: return "forward.circle.fill"
         }
     }
 

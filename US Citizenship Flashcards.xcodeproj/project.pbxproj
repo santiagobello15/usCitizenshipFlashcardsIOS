@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7B83D8A42FB156DF0099FA09 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 773D2374DB00437E903BC912 /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +55,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7B83D8A42FB156DF0099FA09 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +115,6 @@
 			);
 			name = "US Citizenship Flashcards";
 			packageProductDependencies = (
-				773D2374DB00437E903BC912 /* Supabase */,
 			);
 			productName = "US Citizenship Flashcards";
 			productReference = 7BD09BAB2FAD695C00D853C2 /* US Citizenship Flashcards.app */;
@@ -201,10 +198,7 @@
 			);
 			mainGroup = 7BD09BA22FAD695C00D853C2;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				659687CE68794B31A05AAE08 /* XCRemoteSwiftPackageReference "supabase-swift" */,
-			);
-			preferredProjectObjectVersion = 77;
+				preferredProjectObjectVersion = 77;
 			productRefGroup = 7BD09BAC2FAD695C00D853C2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -403,7 +397,7 @@
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				INFOPLIST_FILE = CustomInfo.plist;
+				INFOPLIST_FILE = "US Citizenship Flashcards/CustomInfo.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "US Citizenshi";
 				INFOPLIST_KEY_CFBundleName = "US Citizenship Flashcards";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
@@ -449,7 +443,7 @@
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				INFOPLIST_FILE = CustomInfo.plist;
+				INFOPLIST_FILE = "US Citizenship Flashcards/CustomInfo.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "US Citizenshi";
 				INFOPLIST_KEY_CFBundleName = "US Citizenship Flashcards";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
@@ -622,24 +616,7 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		659687CE68794B31A05AAE08 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/supabase/supabase-swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
 
-/* Begin XCSwiftPackageProductDependency section */
-		773D2374DB00437E903BC912 /* Supabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 659687CE68794B31A05AAE08 /* XCRemoteSwiftPackageReference "supabase-swift" */;
-			productName = Supabase;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7BD09BA32FAD695C00D853C2 /* Project object */;
 }

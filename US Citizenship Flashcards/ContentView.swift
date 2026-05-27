@@ -2,11 +2,16 @@ import SwiftUI
 
 private enum CardGesturePhase { case idle, waitingForPeek, peeking, swiping }
 
+// MARK: - Brand color
+private extension Color {
+    static let brand = Color(red: 204/255, green: 2/255, blue: 3/255)
+}
+
 struct ContentView: View {
     @State private var cards = allFlashcards
     @State private var currentIndex = 0
-    @State private var isShuffled = false
-    @State private var useLegacy = false
+    @AppStorage("isShuffled") private var isShuffled = false
+    @AppStorage("useLegacy")  private var useLegacy  = false
     @State private var selectedCategories: Set<String> = []
     @State private var results: [String: Assessment] = [:]
 
@@ -16,15 +21,6 @@ struct ContentView: View {
     @State private var peekTask: Task<Void, Never>? = nil
 
     @State private var showSettings = false
-    @State private var showLogin = false
-    @State private var isAuthenticated = false
-    @State private var userEmail: String?
-    @State private var userName: String?
-    @State private var userAvatarUrl: String?
-    @State private var authLoading = false
-    @State private var authError: String?
-    @State private var showDeleteConfirm = false
-    @Environment(\.scenePhase) var scenePhase
 
     private var currentCard: Flashcard { cards[currentIndex] }
     private var currentAssessment: Assessment? { results[currentCard.id] }
@@ -33,9 +29,7 @@ struct ContentView: View {
         Set((useLegacy ? legacyFlashcards : allFlashcards).map(\.category))
     }
 
-    private var availableCategories: [String] {
-        currentCategories.sorted()
-    }
+    private var availableCategories: [String] { currentCategories.sorted() }
 
     private var sourceCards: [Flashcard] {
         let all = useLegacy ? legacyFlashcards : allFlashcards
@@ -43,354 +37,87 @@ struct ContentView: View {
         return all.filter { selected.contains($0.category) }
     }
 
-    private var correctCount: Int { results.values.filter { $0 == .correct }.count }
-    private var wrongCount: Int { results.values.filter { $0 == .wrong }.count }
-    private var skippedCount: Int { results.values.filter { $0 == .skipped }.count }
+    private var correctCount:  Int { results.values.filter { $0 == .correct }.count }
+    private var wrongCount:    Int { results.values.filter { $0 == .wrong }.count }
+    private var skippedCount:  Int { results.values.filter { $0 == .skipped }.count }
     private var totalAssessed: Int { results.count }
+
+    // MARK: - Body
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 header
-                Spacer()
                 cardArea
-                Spacer()
+                    .padding(.vertical, 16)
                 controls
             }
             .background(Color(.systemBackground))
+            .tint(.brand)
             .toolbar {
-                ToolbarItem(placement: leadingPlacement) {
-                    Button { showLogin = true } label: {
-                        Image(systemName: isAuthenticated ? "person.circle.fill" : "person.circle")
-                            .font(.title3)
-                            .foregroundStyle(isAuthenticated ? .blue : .secondary)
-                    }
-                }
                 ToolbarItem(placement: trailingPlacement) {
                     Button { showSettings = true } label: {
                         Image(systemName: "gearshape")
-                            .font(.title3)
+                            .fontWeight(.medium)
                             .foregroundStyle(.secondary)
                     }
                 }
             }
-            .sheet(isPresented: $showSettings) {
-                settingsSheet
-            }
-            .sheet(isPresented: $showLogin) {
-                loginSheet
-            }
+            .sheet(isPresented: $showSettings) { settingsSheet }
         }
-        .task {
-            isAuthenticated = await SupabaseService.shared.isAuthenticated
-            userEmail = await SupabaseService.shared.currentUserEmail
-            userName = await SupabaseService.shared.currentUserFullName
-            userAvatarUrl = await SupabaseService.shared.currentUserAvatarUrl
-            if isAuthenticated {
-                await restoreSettings()
-            }
-            if selectedCategories.isEmpty {
-                selectedCategories = currentCategories
-            }
-        }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .background, isAuthenticated {
-                Task { await saveCurrentSettings() }
-            }
-        }
-    }
-
-    // MARK: - Settings Sheet
-
-    private var settingsSheet: some View {
-        NavigationStack {
-            Form {
-                Section("Question Set") {
-                    Picker("Test Version", selection: yearBinding) {
-                        Text("2025 (128 questions)").tag(false)
-                        Text("2008 (100 questions)").tag(true)
-                    }
-                    .pickerStyle(.menu)
-                }
-
-                Section("Categories") {
-                    ForEach(availableCategories, id: \.self) { category in
-                        Button {
-                            if selectedCategories.contains(category) {
-                                selectedCategories.remove(category)
-                            } else {
-                                selectedCategories.insert(category)
-                            }
-                            rebuildCards()
-                            if currentIndex >= cards.count {
-                                currentIndex = max(0, cards.count - 1)
-                            }
-                            Task { await saveCurrentSettings() }
-                        } label: {
-                            HStack {
-                                Text(category)
-                                    .foregroundStyle(.primary)
-                                Spacer()
-                                if selectedCategories.isEmpty || selectedCategories.contains(category) {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.blue)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Section("Progress") {
-                    HStack {
-                        Text("Assessed")
-                        Spacer()
-                        Text("\(totalAssessed) of \(sourceCards.count)")
-                            .foregroundStyle(.secondary)
-                    }
-                    HStack {
-                        Text("Score")
-                        Spacer()
-                        let pct = totalAssessed > 0 ? correctCount * 100 / totalAssessed : 0
-                        Text("\(pct)%")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                Section("About") {
-                    HStack {
-                        Text("Version")
-                        Spacer()
-                        Text("1.0")
-                            .foregroundStyle(.secondary)
-                    }
-                    HStack {
-                        Text("Source")
-                        Spacer()
-                        Text("USCIS.gov")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                if isAuthenticated {
-                    Section {
-                        Button(role: .destructive) {
-                            showDeleteConfirm = true
-                        } label: {
-                            HStack {
-                                Spacer()
-                                Text("Delete Account")
-                                Spacer()
-                            }
-                        }
-                        .confirmationDialog("Delete Account", isPresented: $showDeleteConfirm, titleVisibility: .visible) {
-                            Button("Delete", role: .destructive) {
-                                Task {
-                                    try? await SupabaseService.shared.deleteAccount()
-                                    isAuthenticated = false
-                                    userEmail = nil
-                                    userName = nil
-                                    userAvatarUrl = nil
-                                }
-                            }
-                            Button("Cancel", role: .cancel) { }
-                        } message: {
-                            Text("All your saved progress and settings will be permanently deleted. This cannot be undone.")
-                        }
-                    }
-                }
-            }
-            .navigationTitle("Settings")
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button("Done") { showSettings = false }
-                }
-            }
-        }
-    }
-
-    // MARK: - Login Sheet
-
-    private var loginSheet: some View {
-        NavigationStack {
-            VStack(spacing: 24) {
-                Spacer()
-
-                if isAuthenticated {
-                    AsyncImage(url: userAvatarUrl.flatMap { URL(string: $0) }) { phase in
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        } else if phase.error != nil {
-                            Image(systemName: "person.circle.fill")
-                                .font(.system(size: 72))
-                                .foregroundStyle(.quaternary)
-                        } else {
-                            ProgressView()
-                        }
-                    }
-                    .frame(width: 72, height: 72)
-                    .clipShape(.circle)
-
-                    if let name = userName {
-                        Text(name)
-                            .font(.title3.weight(.semibold))
-                    }
-                    Text(userEmail ?? "Unknown")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-
-                    if authLoading {
-                        ProgressView()
-                            .padding(.top, 8)
-                    }
-
-                    Button(role: .destructive) {
-                        Task {
-                            authLoading = true
-                            await saveCurrentSettings()
-                            try? await SupabaseService.shared.signOut()
-                            isAuthenticated = false
-                            userEmail = nil
-                            userName = nil
-                            userAvatarUrl = nil
-                            authLoading = false
-                        }
-                    } label: {
-                        Text("Sign Out")
-                            .font(.body.weight(.medium))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(.red.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
-                            .foregroundStyle(.red)
-                    }
-                    .padding(.horizontal, 40)
-                    .disabled(authLoading)
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .font(.system(size: 72))
-                        .foregroundStyle(.quaternary)
-
-                    Text("Sign in to sync your progress across devices.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 40)
-
-                    if let error = authError {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 40)
-                    }
-
-                    if authLoading {
-                        ProgressView()
-                    }
-
-                    Button {
-                        Task {
-                            authLoading = true
-                            authError = nil
-                            do {
-                                try await SupabaseService.shared.signInWithGoogle()
-                                isAuthenticated = await SupabaseService.shared.isAuthenticated
-                                userEmail = await SupabaseService.shared.currentUserEmail
-                                userName = await SupabaseService.shared.currentUserFullName
-                                userAvatarUrl = await SupabaseService.shared.currentUserAvatarUrl
-                                if isAuthenticated {
-                                    await restoreSettings()
-                                }
-                            } catch {
-                                authError = error.localizedDescription
-                            }
-                            authLoading = false
-                        }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: "globe")
-                            Text("Sign in with Google")
-                                .font(.body.weight(.medium))
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(.black, in: RoundedRectangle(cornerRadius: 12))
-                        .foregroundStyle(.white)
-                    }
-                    .padding(.horizontal, 40)
-                    .disabled(authLoading)
-
-                    Button {
-                        showLogin = false
-                    } label: {
-                        Text("Maybe later")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                Spacer()
-            }
-            .navigationTitle(isAuthenticated ? "Account" : "Sign In")
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button("Close") { showLogin = false }
-                }
-            }
-        }
-        #if os(iOS)
-        .presentationDetents([.medium, .large])
-        #endif
-        .task {
-            isAuthenticated = await SupabaseService.shared.isAuthenticated
-            userEmail = await SupabaseService.shared.currentUserEmail
-            userName = await SupabaseService.shared.currentUserFullName
-            userAvatarUrl = await SupabaseService.shared.currentUserAvatarUrl
-        }
-    }
-
-    // MARK: - Year Binding
-
-    #if os(iOS)
-    private var leadingPlacement: ToolbarItemPlacement { .topBarLeading }
-    private var trailingPlacement: ToolbarItemPlacement { .topBarTrailing }
-    #else
-    private var leadingPlacement: ToolbarItemPlacement { .automatic }
-    private var trailingPlacement: ToolbarItemPlacement { .automatic }
-    #endif
-
-    private var yearBinding: Binding<Bool> {
-        Binding(
-            get: { useLegacy },
-            set: { if $0 != useLegacy { switchSet(to: $0) } }
-        )
+        .onAppear { loadPersistedState() }
+        .onChange(of: results)            { _, _ in saveResults() }
+        .onChange(of: selectedCategories) { _, _ in saveSelectedCategories() }
     }
 
     // MARK: - Header
 
     private var header: some View {
-        VStack(spacing: 8) {
-            HStack {
+        VStack(spacing: 10) {
+            HStack(alignment: .center, spacing: 8) {
                 Text(currentCard.category)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(Color.brand)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.brand.opacity(0.08), in: Capsule())
+                    .lineLimit(1)
+
                 Spacer()
-                Text("\(currentIndex + 1) / \(cards.count)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
-                    .contentTransition(.numericText())
+
+                HStack(spacing: 2) {
+                    Text("\(currentIndex + 1)")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.primary)
+                        .monospacedDigit()
+                        .contentTransition(.numericText())
+                    Text("/ \(cards.count)")
+                        .font(.subheadline)
+                        .foregroundStyle(.tertiary)
+                        .monospacedDigit()
+                }
             }
 
-            ProgressView(value: Double(currentIndex + 1), total: Double(cards.count))
-                .tint(.blue)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color(.systemFill))
+                        .frame(height: 5)
+                    Capsule()
+                        .fill(Color.brand)
+                        .frame(width: geo.size.width * CGFloat(currentIndex + 1) / CGFloat(cards.count),
+                               height: 5)
+                        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: currentIndex)
+                }
+            }
+            .frame(height: 5)
         }
-        .padding(.horizontal, 28)
-        .padding(.top, 12)
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+        .padding(.bottom, 4)
     }
 
-    // MARK: - Card
+    // MARK: - Card area
 
     private var cardArea: some View {
         ZStack {
@@ -398,10 +125,10 @@ struct ContentView: View {
                 .id(cards[currentIndex].id)
                 .transition(.asymmetric(
                     insertion: .move(edge: navigatingForward ? .trailing : .leading),
-                    removal: .move(edge: navigatingForward ? .leading : .trailing)
+                    removal:   .move(edge: navigatingForward ? .leading  : .trailing)
                 ))
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 20)
         .clipped()
         .contentShape(Rectangle())
         .gesture(cardGesture)
@@ -435,8 +162,7 @@ struct ContentView: View {
                 case .waitingForPeek:
                     if movement > 12 {
                         gesturePhase = .swiping
-                        peekTask?.cancel()
-                        peekTask = nil
+                        peekTask?.cancel(); peekTask = nil
                     }
                 case .peeking:
                     if movement > 12 {
@@ -451,24 +177,15 @@ struct ContentView: View {
             }
             .onEnded { value in
                 let dx = value.translation.width
-                defer {
-                    gesturePhase = .idle
-                    peekTask?.cancel()
-                    peekTask = nil
-                }
+                defer { gesturePhase = .idle; peekTask?.cancel(); peekTask = nil }
                 switch gesturePhase {
                 case .peeking:
                     withAnimation(.interpolatingSpring(mass: 0.7, stiffness: 80, damping: 12, initialVelocity: 3)) {
                         rotation = 0
                     }
                 case .swiping:
-                    if dx < -50, currentIndex < cards.count - 1 {
-                        navigatingForward = true
-                        nextCard()
-                    } else if dx > 50, currentIndex > 0 {
-                        navigatingForward = false
-                        previousCard()
-                    }
+                    if dx < -50, currentIndex < cards.count - 1 { navigatingForward = true;  nextCard() }
+                    else if dx > 50, currentIndex > 0            { navigatingForward = false; previousCard() }
                 case .idle, .waitingForPeek:
                     flipCard()
                 }
@@ -478,79 +195,67 @@ struct ContentView: View {
     // MARK: - Controls
 
     private var controls: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 16) {
             navigationRow
-            shuffleRow
             assessmentRow
-            statsRow
+            bottomRow
         }
-        .padding(.horizontal, 28)
-        .padding(.bottom, 20)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 24)
     }
 
-    // MARK: - Navigation
+    // MARK: - Navigation row
 
     private var navigationRow: some View {
-        HStack(spacing: 48) {
-            Button {
-                previousCard()
-            } label: {
+        HStack(spacing: 12) {
+            Button { previousCard() } label: {
                 Image(systemName: "chevron.left")
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(currentIndex == 0 ? Color.blue.opacity(0.3) : .blue)
-                    .frame(width: 52, height: 52)
-                    .background(.quaternary.opacity(0.3), in: Circle())
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(currentIndex == 0 ? .tertiary : .primary)
+                    .frame(width: 48, height: 48)
+                    .background(Color(.secondarySystemFill), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .disabled(currentIndex == 0)
             .buttonStyle(.plain)
 
+            swipeDots.frame(maxWidth: .infinity)
+
             Button {
-                if currentIndex == cards.count - 1 {
-                    resetToStart()
-                } else {
-                    nextCard()
-                }
+                if currentIndex == cards.count - 1 { resetToStart() }
+                else { nextCard() }
             } label: {
-                if currentIndex == cards.count - 1 {
-                    Image(systemName: "arrow.counterclockwise")
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(.blue)
-                        .frame(width: 52, height: 52)
-                        .background(.quaternary.opacity(0.3), in: Circle())
-                } else {
-                    Image(systemName: "chevron.right")
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(.blue)
-                        .frame(width: 52, height: 52)
-                        .background(.quaternary.opacity(0.3), in: Circle())
-                }
+                Image(systemName: currentIndex == cards.count - 1 ? "arrow.counterclockwise" : "chevron.right")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .frame(width: 48, height: 48)
+                    .background(Color(.secondarySystemFill), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .buttonStyle(.plain)
         }
     }
 
-    // MARK: - Shuffle
-
-    private var shuffleRow: some View {
-        Button {
-            if isShuffled {
-                cards = sourceCards
-            } else {
-                cards = sourceCards.shuffled()
+    private var swipeDots: some View {
+        HStack(spacing: 5) {
+            ForEach(dotRange, id: \.self) { i in
+                Circle()
+                    .fill(i == currentIndex ? Color.brand : Color(.systemFill))
+                    .frame(width: i == currentIndex ? 7 : 5,
+                           height: i == currentIndex ? 7 : 5)
+                    .animation(.spring(response: 0.3), value: currentIndex)
             }
-            isShuffled.toggle()
-            currentIndex = 0
-            Task { await saveCurrentSettings() }
-        } label: {
-            Label("Shuffle Cards", systemImage: isShuffled ? "shuffle.circle.fill" : "shuffle.circle")
-                .font(.subheadline)
-                .foregroundStyle(.blue)
-                .symbolRenderingMode(.hierarchical)
         }
-        .buttonStyle(.plain)
     }
 
-    // MARK: - Assessment
+    private var dotRange: [Int] {
+        let total = cards.count
+        guard total > 1 else { return [0] }
+        if total <= 9 { return Array(0..<total) }
+        let half = 4
+        let start = max(0, min(currentIndex - half, total - 9))
+        return Array(start..<(start + 9))
+    }
+
+    // MARK: - Assessment row
 
     private var assessmentRow: some View {
         HStack(spacing: 8) {
@@ -564,156 +269,220 @@ struct ContentView: View {
     private func assessmentButton(_ type: Assessment) -> some View {
         let isSelected = currentAssessment == type
         return Button {
-            if isSelected {
-                results.removeValue(forKey: currentCard.id)
-            } else {
-                results[currentCard.id] = type
+            withAnimation(.spring(response: 0.25, dampingFraction: 0.7)) {
+                if isSelected { results.removeValue(forKey: currentCard.id) }
+                else          { results[currentCard.id] = type }
             }
-            Task { await saveCurrentSettings() }
         } label: {
             HStack(spacing: 5) {
-                Image(systemName: type.symbol)
+                Image(systemName: isSelected ? type.selectedSymbol : type.symbol)
+                    .font(.subheadline.weight(.semibold))
+                    .symbolRenderingMode(.hierarchical)
                 Text(type.label)
-                    .fontWeight(.medium)
+                    .font(.subheadline.weight(.semibold))
             }
-            .font(.subheadline)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 9)
+            .padding(.vertical, 13)
             .frame(maxWidth: .infinity)
-            .background(
-                (isSelected ? type.color : Color.gray).opacity(0.15),
-                in: Capsule()
-            )
-            .foregroundStyle(isSelected ? type.color : .secondary)
-            .clipShape(Capsule())
-            .overlay(
-                Capsule()
-                    .strokeBorder(isSelected ? type.color.opacity(0.4) : Color.gray.opacity(0.2), lineWidth: 1)
-            )
+            .foregroundStyle(isSelected ? type.color : Color(.label).opacity(0.5))
+            .background {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(isSelected ? type.color.opacity(0.12) : Color(.secondarySystemFill))
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(type.color.opacity(0.5), lineWidth: 1.5)
+                }
+            }
+            .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isSelected)
         }
         .buttonStyle(.plain)
     }
 
-    // MARK: - Stats
+    // MARK: - Bottom row
 
-    private var statsRow: some View {
-        HStack(spacing: 0) {
-            if totalAssessed == 0 {
-                Text("Tap Wrong, Skip, or Got It to track your progress")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-                    .frame(maxWidth: .infinity)
-            } else {
-                HStack(spacing: 12) {
-                    StatItem(icon: "checkmark.circle.fill", count: correctCount, color: .green)
-                    StatItem(icon: "xmark.circle.fill", count: wrongCount, color: .red)
-                    StatItem(icon: "forward.fill", count: skippedCount, color: .orange)
+    private var bottomRow: some View {
+        HStack(spacing: 10) {
+            Group {
+                if totalAssessed > 0 {
+                    HStack(spacing: 10) {
+                        StatChip(symbol: "checkmark.circle.fill", count: correctCount, color: .green)
+                        StatChip(symbol: "xmark.circle.fill",     count: wrongCount,   color: .red)
+                        StatChip(symbol: "forward.circle.fill",   count: skippedCount, color: .orange)
+                        Button {
+                            withAnimation { results.removeAll() }
+                        } label: {
+                            Text("Clear")
+                                .font(.caption.weight(.medium))
+                                .foregroundStyle(.tertiary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                } else {
+                    Text("Mark each card to track your progress")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
                 }
-
-                Spacer()
-
-                Button("Clear") {
-                    withAnimation { results.removeAll() }
-                    Task { await saveCurrentSettings() }
-                }
-                .font(.caption)
-                .foregroundStyle(.tertiary)
-                .buttonStyle(.plain)
             }
+
+            Spacer()
+
+            Button {
+                if isShuffled { cards = sourceCards }
+                else          { cards = sourceCards.shuffled() }
+                isShuffled.toggle()
+                currentIndex = 0
+            } label: {
+                Image(systemName: "shuffle")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(isShuffled ? .white : Color(.label).opacity(0.6))
+                    .padding(10)
+                    .background {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(isShuffled ? Color.brand : Color(.secondarySystemFill))
+                    }
+            }
+            .buttonStyle(.plain)
+            .animation(.spring(response: 0.3), value: isShuffled)
         }
-        .frame(height: 24)
+    }
+
+    // MARK: - Placements
+
+    #if os(iOS)
+    private var trailingPlacement: ToolbarItemPlacement { .topBarTrailing }
+    #else
+    private var trailingPlacement: ToolbarItemPlacement { .automatic }
+    #endif
+
+    // MARK: - Settings Sheet
+
+    private var yearBinding: Binding<Bool> {
+        Binding(get: { useLegacy }, set: { if $0 != useLegacy { switchSet(to: $0) } })
+    }
+
+    private var settingsSheet: some View {
+        NavigationStack {
+            Form {
+                Section("Question Set") {
+                    Picker("Version", selection: yearBinding) {
+                        Text("2025 (128 questions)").tag(false)
+                        Text("2008 (100 questions)").tag(true)
+                    }
+                    .pickerStyle(.menu)
+                }
+
+                Section("Categories") {
+                    ForEach(availableCategories, id: \.self) { (category: String) in
+                        Button {
+                            if selectedCategories.contains(category) { selectedCategories.remove(category) }
+                            else { selectedCategories.insert(category) }
+                            rebuildCards()
+                            if currentIndex >= cards.count { currentIndex = max(0, cards.count - 1) }
+                        } label: {
+                            HStack {
+                                Text(category).foregroundStyle(.primary)
+                                Spacer()
+                                if selectedCategories.isEmpty || selectedCategories.contains(category) {
+                                    Image(systemName: "checkmark").foregroundStyle(Color.brand)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Section("Progress") {
+                    LabeledContent("Assessed", value: "\(totalAssessed) of \(sourceCards.count)")
+                    LabeledContent("Score") {
+                        let pct = totalAssessed > 0 ? correctCount * 100 / totalAssessed : 0
+                        Text("\(pct)%").foregroundStyle(.secondary)
+                    }
+                }
+
+                Section("About") {
+                    LabeledContent("Version", value: "1.0")
+                    LabeledContent("Source", value: "USCIS.gov")
+                }
+            }
+            .navigationTitle("Settings")
+            .toolbar { ToolbarItem(placement: .automatic) { Button("Done") { showSettings = false } } }
+        }
     }
 
     // MARK: - Actions
 
     private func nextCard() {
         guard currentIndex < cards.count - 1 else { return }
-        rotation = 0
-        navigatingForward = true
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
-            currentIndex += 1
-        }
+        rotation = 0; navigatingForward = true
+        withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) { currentIndex += 1 }
     }
 
     private func previousCard() {
         guard currentIndex > 0 else { return }
-        rotation = 0
-        navigatingForward = false
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
-            currentIndex -= 1
-        }
+        rotation = 0; navigatingForward = false
+        withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) { currentIndex -= 1 }
     }
 
     private func resetToStart() {
-        rotation = 0
-        navigatingForward = true
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
-            currentIndex = 0
-        }
-    }
-
-    // MARK: - Settings Sync
-
-    private func restoreSettings() async {
-        guard let userId = await SupabaseService.shared.currentUserId else { return }
-        guard let settings = await SupabaseService.shared.fetchSettings(for: userId) else { return }
-        useLegacy = settings.useLegacy
-        isShuffled = settings.isShuffled
-        if let data = settings.categoriesData {
-            selectedCategories = SupabaseService.shared.decodeCategories(from: data) ?? currentCategories
-        } else {
-            selectedCategories = currentCategories
-        }
-        let filtered = sourceCards
-        cards = isShuffled ? filtered.shuffled() : filtered
-        currentIndex = 0
-        if let data = settings.resultsData {
-            results = SupabaseService.shared.decodeResults(from: data) ?? [:]
-        }
-    }
-
-    private func saveCurrentSettings() async {
-        guard let userId = await SupabaseService.shared.currentUserId else { return }
-        let settings = SupabaseService.shared.buildSettings(useLegacy: useLegacy, isShuffled: isShuffled, results: results, categories: selectedCategories.isEmpty ? currentCategories : selectedCategories)
-        try? await SupabaseService.shared.saveSettings(settings, for: userId)
+        rotation = 0; navigatingForward = true
+        withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) { currentIndex = 0 }
     }
 
     private func switchSet(to legacy: Bool) {
         useLegacy = legacy
         selectedCategories = currentCategories
         rebuildCards()
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
-            currentIndex = 0
-            results.removeAll()
-        }
+        withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) { currentIndex = 0; results.removeAll() }
         isShuffled = false
-        Task { await saveCurrentSettings() }
     }
 
     private func rebuildCards() {
-        let filtered = sourceCards
-        cards = isShuffled ? filtered.shuffled() : filtered
+        cards = isShuffled ? sourceCards.shuffled() : sourceCards
+    }
+
+    // MARK: - Local persistence
+
+    private func loadPersistedState() {
+        if let data = UserDefaults.standard.data(forKey: "results"),
+           let decoded = try? JSONDecoder().decode([String: Assessment].self, from: data) {
+            results = decoded
+        }
+        if let data = UserDefaults.standard.data(forKey: "selectedCategories"),
+           let decoded = try? JSONDecoder().decode([String].self, from: data) {
+            // Only keep categories that are valid for the current set
+            let valid = Set(decoded).intersection(currentCategories)
+            selectedCategories = valid.isEmpty ? currentCategories : valid
+        } else {
+            selectedCategories = currentCategories
+        }
+        rebuildCards()
+    }
+
+    private func saveResults() {
+        if let data = try? JSONEncoder().encode(results) {
+            UserDefaults.standard.set(data, forKey: "results")
+        }
+    }
+
+    private func saveSelectedCategories() {
+        if let data = try? JSONEncoder().encode(Array(selectedCategories).sorted()) {
+            UserDefaults.standard.set(data, forKey: "selectedCategories")
+        }
     }
 }
 
-private struct StatItem: View {
-    let icon: String
+// MARK: - Sub-views
+
+private struct StatChip: View {
+    let symbol: String
     let count: Int
     let color: Color
 
     var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: icon)
-                .foregroundStyle(color)
-            Text("\(count)")
-                .monospacedDigit()
-                .contentTransition(.numericText())
-                .foregroundStyle(.secondary)
+        HStack(spacing: 3) {
+            Image(systemName: symbol).foregroundStyle(color)
+            Text("\(count)").monospacedDigit().contentTransition(.numericText()).foregroundStyle(.secondary)
         }
-        .font(.caption)
+        .font(.caption.weight(.medium))
     }
 }
 
-#Preview {
-    ContentView()
-}
+#Preview { ContentView() }
