@@ -1,18 +1,14 @@
 //
-//  US_Citizenship_FlashcardsTests.swift
-//  US Citizenship FlashcardsTests
-//
-//  Created by Katherine on 07/05/2026.
+//  NaturalizeMeTests.swift
+//  NaturalizeMeTests
 //
 
 import Testing
 
-struct US_Citizenship_FlashcardsTests {
+struct NaturalizeMeTests {
 
     @Test func example() async throws {
         // Write your test here and use APIs like `#expect(...)` to check expected conditions.
-        // Swift Testing Documentation
-        // https://developer.apple.com/documentation/testing
     }
 
 }

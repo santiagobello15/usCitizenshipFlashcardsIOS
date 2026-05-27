@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7BD09BAA2FAD695C00D853C2"
-               BuildableName = "US Citizenship Flashcards.app"
+               BuildableName = "NaturalizeMe.app"
                BlueprintName = "US Citizenship Flashcards"
                ReferencedContainer = "container:US Citizenship Flashcards.xcodeproj">
             </BuildableReference>
@@ -70,7 +70,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7BD09BAA2FAD695C00D853C2"
-            BuildableName = "US Citizenship Flashcards.app"
+            BuildableName = "NaturalizeMe.app"
             BlueprintName = "US Citizenship Flashcards"
             ReferencedContainer = "container:US Citizenship Flashcards.xcodeproj">
          </BuildableReference>
@@ -87,7 +87,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7BD09BAA2FAD695C00D853C2"
-            BuildableName = "US Citizenship Flashcards.app"
+            BuildableName = "NaturalizeMe.app"
             BlueprintName = "US Citizenship Flashcards"
             ReferencedContainer = "container:US Citizenship Flashcards.xcodeproj">
          </BuildableReference>

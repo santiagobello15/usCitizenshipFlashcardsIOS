@@ -12,14 +12,14 @@
 			containerPortal = 7BD09BA32FAD695C00D853C2 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 7BD09BAA2FAD695C00D853C2;
-			remoteInfo = "US Citizenship Flashcards";
+			remoteInfo = NaturalizeMe;
 		};
 		7BD09BC52FAD695D00D853C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7BD09BA32FAD695C00D853C2 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 7BD09BAA2FAD695C00D853C2;
-			remoteInfo = "US Citizenship Flashcards";
+			remoteInfo = NaturalizeMe;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -30,17 +30,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		7BD09BAD2FAD695C00D853C2 /* US Citizenship Flashcards */ = {
+		7BD09BAD2FAD695C00D853C2 /* NaturalizeMe */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "US Citizenship Flashcards";
 			sourceTree = "<group>";
 		};
-		7BD09BBD2FAD695D00D853C2 /* US Citizenship FlashcardsTests */ = {
+		7BD09BBD2FAD695D00D853C2 /* NaturalizeMeTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "US Citizenship FlashcardsTests";
 			sourceTree = "<group>";
 		};
-		7BD09BC72FAD695D00D853C2 /* US Citizenship FlashcardsUITests */ = {
+		7BD09BC72FAD695D00D853C2 /* NaturalizeMeUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "US Citizenship FlashcardsUITests";
 			sourceTree = "<group>";
@@ -75,9 +75,9 @@
 		7BD09BA22FAD695C00D853C2 = {
 			isa = PBXGroup;
 			children = (
-				7BD09BAD2FAD695C00D853C2 /* US Citizenship Flashcards */,
-				7BD09BBD2FAD695D00D853C2 /* US Citizenship FlashcardsTests */,
-				7BD09BC72FAD695D00D853C2 /* US Citizenship FlashcardsUITests */,
+				7BD09BAD2FAD695C00D853C2 /* NaturalizeMe */,
+				7BD09BBD2FAD695D00D853C2 /* NaturalizeMeTests */,
+				7BD09BC72FAD695D00D853C2 /* NaturalizeMeUITests */,
 				7BD09BAC2FAD695C00D853C2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7BD09BAA2FAD695C00D853C2 /* US Citizenship Flashcards */ = {
+		7BD09BAA2FAD695C00D853C2 /* NaturalizeMe */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7BD09BCE2FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "US Citizenship Flashcards" */;
+			buildConfigurationList = 7BD09BCE2FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "NaturalizeMe" */;
 			buildPhases = (
 				7BD09BA72FAD695C00D853C2 /* Sources */,
 				7BD09BA82FAD695C00D853C2 /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				7BD09BAD2FAD695C00D853C2 /* US Citizenship Flashcards */,
+				7BD09BAD2FAD695C00D853C2 /* NaturalizeMe */,
 			);
-			name = "US Citizenship Flashcards";
+			name = NaturalizeMe;
 			packageProductDependencies = (
 			);
-			productName = "US Citizenship Flashcards";
+			productName = NaturalizeMe;
 			productReference = 7BD09BAB2FAD695C00D853C2 /* US Citizenship Flashcards.app */;
 			productType = "com.apple.product-type.application";
 		};
-		7BD09BB92FAD695D00D853C2 /* US Citizenship FlashcardsTests */ = {
+		7BD09BB92FAD695D00D853C2 /* NaturalizeMeTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7BD09BD12FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "US Citizenship FlashcardsTests" */;
+			buildConfigurationList = 7BD09BD12FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "NaturalizeMeTests" */;
 			buildPhases = (
 				7BD09BB62FAD695D00D853C2 /* Sources */,
 				7BD09BB72FAD695D00D853C2 /* Frameworks */,
@@ -131,18 +131,18 @@
 				7BD09BBC2FAD695D00D853C2 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				7BD09BBD2FAD695D00D853C2 /* US Citizenship FlashcardsTests */,
+				7BD09BBD2FAD695D00D853C2 /* NaturalizeMeTests */,
 			);
-			name = "US Citizenship FlashcardsTests";
+			name = NaturalizeMeTests;
 			packageProductDependencies = (
 			);
-			productName = "US Citizenship FlashcardsTests";
+			productName = NaturalizeMeTests;
 			productReference = 7BD09BBA2FAD695D00D853C2 /* US Citizenship FlashcardsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		7BD09BC32FAD695D00D853C2 /* US Citizenship FlashcardsUITests */ = {
+		7BD09BC32FAD695D00D853C2 /* NaturalizeMeUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7BD09BD42FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "US Citizenship FlashcardsUITests" */;
+			buildConfigurationList = 7BD09BD42FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "NaturalizeMeUITests" */;
 			buildPhases = (
 				7BD09BC02FAD695D00D853C2 /* Sources */,
 				7BD09BC12FAD695D00D853C2 /* Frameworks */,
@@ -154,12 +154,12 @@
 				7BD09BC62FAD695D00D853C2 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				7BD09BC72FAD695D00D853C2 /* US Citizenship FlashcardsUITests */,
+				7BD09BC72FAD695D00D853C2 /* NaturalizeMeUITests */,
 			);
-			name = "US Citizenship FlashcardsUITests";
+			name = NaturalizeMeUITests;
 			packageProductDependencies = (
 			);
-			productName = "US Citizenship FlashcardsUITests";
+			productName = NaturalizeMeUITests;
 			productReference = 7BD09BC42FAD695D00D853C2 /* US Citizenship FlashcardsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 7BD09BA62FAD695C00D853C2 /* Build configuration list for PBXProject "US Citizenship Flashcards" */;
+			buildConfigurationList = 7BD09BA62FAD695C00D853C2 /* Build configuration list for PBXProject "NaturalizeMe" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7BD09BAA2FAD695C00D853C2 /* US Citizenship Flashcards */,
-				7BD09BB92FAD695D00D853C2 /* US Citizenship FlashcardsTests */,
-				7BD09BC32FAD695D00D853C2 /* US Citizenship FlashcardsUITests */,
+				7BD09BAA2FAD695C00D853C2 /* NaturalizeMe */,
+				7BD09BB92FAD695D00D853C2 /* NaturalizeMeTests */,
+				7BD09BC32FAD695D00D853C2 /* NaturalizeMeUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		7BD09BBC2FAD695D00D853C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7BD09BAA2FAD695C00D853C2 /* US Citizenship Flashcards */;
+			target = 7BD09BAA2FAD695C00D853C2 /* NaturalizeMe */;
 			targetProxy = 7BD09BBB2FAD695D00D853C2 /* PBXContainerItemProxy */;
 		};
 		7BD09BC62FAD695D00D853C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7BD09BAA2FAD695C00D853C2 /* US Citizenship Flashcards */;
+			target = 7BD09BAA2FAD695C00D853C2 /* NaturalizeMe */;
 			targetProxy = 7BD09BC52FAD695D00D853C2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -543,7 +543,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = "US Citizenship Flashcards";
+				TEST_TARGET_NAME = NaturalizeMe;
 				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Debug;
@@ -567,7 +567,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = "US Citizenship Flashcards";
+				TEST_TARGET_NAME = NaturalizeMe;
 				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Release;
@@ -575,7 +575,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		7BD09BA62FAD695C00D853C2 /* Build configuration list for PBXProject "US Citizenship Flashcards" */ = {
+		7BD09BA62FAD695C00D853C2 /* Build configuration list for PBXProject "NaturalizeMe" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7BD09BCC2FAD695D00D853C2 /* Debug */,
@@ -584,7 +584,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7BD09BCE2FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "US Citizenship Flashcards" */ = {
+		7BD09BCE2FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "NaturalizeMe" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7BD09BCF2FAD695D00D853C2 /* Debug */,
@@ -593,7 +593,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7BD09BD12FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "US Citizenship FlashcardsTests" */ = {
+		7BD09BD12FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "NaturalizeMeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7BD09BD22FAD695D00D853C2 /* Debug */,
@@ -602,7 +602,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7BD09BD42FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "US Citizenship FlashcardsUITests" */ = {
+		7BD09BD42FAD695D00D853C2 /* Build configuration list for PBXNativeTarget "NaturalizeMeUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7BD09BD52FAD695D00D853C2 /* Debug */,
