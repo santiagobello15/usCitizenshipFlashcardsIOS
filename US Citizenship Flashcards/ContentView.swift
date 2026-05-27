@@ -21,7 +21,7 @@ struct ContentView: View {
     @State private var peekTask: Task<Void, Never>? = nil
 
     @State private var showSettings = false
-    @State private var categoriesExpanded = true
+    @State private var categoriesExpanded = false
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var currentCard: Flashcard { cards[currentIndex] }
@@ -469,7 +469,8 @@ struct ContentView: View {
             }
         }
         #if os(iOS)
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.fraction(0.65), .large])
+        .presentationDragIndicator(.hidden)
         #endif
     }
 
