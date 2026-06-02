@@ -457,7 +457,7 @@ struct ContentView: View {
                 }
 
                 Section("About") {
-                    LabeledContent("Version", value: "1.0")
+                    LabeledContent("Version", value: "2.0")
                     LabeledContent("Source", value: "USCIS.gov")
                 }
 
