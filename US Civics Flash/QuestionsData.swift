@@ -239,7 +239,7 @@ let allFlashcards: [Flashcard] = [
     ),
     Flashcard(
         question: "What are two Cabinet-level positions?",
-        answer: "Secretary of State, Secretary of Treasury, Secretary of Defense, Attorney General, Secretary of Homeland Security, Vice President, and others.",
+        answer: "Attorney General, Secretary of Agriculture, Secretary of Commerce, Secretary of Defense, Secretary of Education, Secretary of Energy, Secretary of Health and Human Services, Secretary of Homeland Security, Secretary of Housing and Urban Development, Secretary of the Interior, Secretary of Labor, Secretary of State, Secretary of Transportation, Secretary of the Treasury, Secretary of Veterans Affairs, Vice President, and others.",
         category: "System of Government"
     ),
     Flashcard(
@@ -438,7 +438,7 @@ let allFlashcards: [Flashcard] = [
     ),
     Flashcard(
         question: "Thomas Jefferson is famous for many things. Name one.",
-        answer: "Writer of the Declaration of Independence, third president, doubled the size of the U.S. (Louisiana Purchase), first Secretary of State, founded the University of Virginia.",
+        answer: "Writer of the Declaration of Independence, third president, doubled the size of the U.S. (Louisiana Purchase), first Secretary of State, founded the University of Virginia, writer of the Virginia Statute on Religious Freedom.",
         category: "Colonial Period & Independence"
     ),
     Flashcard(
@@ -480,7 +480,7 @@ let allFlashcards: [Flashcard] = [
     ),
     Flashcard(
         question: "What did the Emancipation Proclamation do?",
-        answer: "Freed the slaves in the Confederacy / freed slaves in Confederate states / freed slaves in most Southern states.",
+        answer: "Freed the slaves / freed slaves in the Confederacy / freed slaves in Confederate states / freed slaves in most Southern states.",
         category: "1800s"
     ),
     Flashcard(
@@ -582,7 +582,7 @@ let allFlashcards: [Flashcard] = [
     ),
     Flashcard(
         question: "What major event happened on September 11, 2001 in the United States?",
-        answer: "Terrorists attacked the United States / crashed planes into the World Trade Center, the Pentagon, and a field in Pennsylvania.",
+        answer: "Terrorists attacked the United States / terrorists crashed planes into the World Trade Center in New York City / terrorists crashed a plane into the Pentagon in Arlington, Virginia / terrorists crashed a plane in a field in Pennsylvania.",
         category: "Recent American History"
     ),
     Flashcard(
@@ -592,7 +592,7 @@ let allFlashcards: [Flashcard] = [
     ),
     Flashcard(
         question: "Name one American Indian tribe in the United States.",
-        answer: "Cherokee, Navajo, Sioux, Chippewa, Choctaw, Pueblo, Apache, Iroquois, Creek, Seminole, and many others.",
+        answer: "Apache, Blackfeet, Cayuga, Cherokee, Cheyenne, Chippewa, Choctaw, Creek, Crow, Hopi, Huron, Inupiat, Lakota, Mohawk, Mohegan, Navajo, Oneida, Onondaga, Pueblo, Seminole, Seneca, Shawnee, Sioux, Teton, Tuscarora, and many others.",
         category: "Recent American History"
     ),
     Flashcard(
@@ -1127,7 +1127,7 @@ let legacyFlashcards: [Flashcard] = [
     ),
     Flashcard(
         question: "Name one state that borders Canada.",
-        answer: "Maine, New Hampshire, Vermont, New York, Michigan, Minnesota, North Dakota, Montana, Idaho, Washington, or Alaska.",
+        answer: "Maine, New Hampshire, Vermont, New York, Pennsylvania, Ohio, Michigan, Minnesota, North Dakota, Montana, Idaho, Washington, or Alaska.",
         category: "Geography"
     ),
     Flashcard(
