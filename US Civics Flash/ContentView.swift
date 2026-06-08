@@ -1,4 +1,5 @@
 import SwiftUI
+import StoreKit
 
 private enum CardGesturePhase { case idle, waitingForPeek, peeking, swiping }
 
@@ -23,6 +24,7 @@ struct ContentView: View {
     @State private var showSettings = false
     @State private var categoriesExpanded = false
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.requestReview) private var requestReview
 
     private var currentCard: Flashcard { cards[currentIndex] }
     private var currentAssessment: Assessment? { results[currentCard.id] }
@@ -292,6 +294,9 @@ struct ContentView: View {
                     }
                     nextCard()
                 }
+            }
+            if type == .correct, !isSelected, ReviewManager.registerCorrectAnswer() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { requestReview() }
             }
         } label: {
             HStack(spacing: 5) {
